@@ -1,7 +1,5 @@
 #include <string.h>
-
 #include "can_hasam.h"
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 CanHasam::CanHasam(std::function<void(std::shared_ptr<Message>)> fn)
@@ -13,7 +11,7 @@ CanHasam::CanHasam(std::function<void(std::shared_ptr<Message>)> fn)
 void CanHasam::Receive(struct timeval *tv, struct canfd_frame* frame)
 {
 	canid_t canid = Message::CanIdFromFrame(frame);
-	printf("%8.8X\n", canid);
+	//printf("%8.8X\n", canid);
 
 	if (frame->can_id & FirstPacketLongMsg_Mask)
 	{

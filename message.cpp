@@ -16,6 +16,16 @@ Message::Message()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+Message::Message(uint8_t src, uint8_t dest, uint8_t cmd, std::vector<uint8_t> _data)
+{
+	time.tv_sec = 0;
+	time.tv_usec = 0;
+	can_id = (src << 16) | (dest << 8) | cmd;
+	data = _data;
+	len = (uint8_t)data.size();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 Message::Message(struct timeval* tv, struct canfd_frame* frame)
 {
 	if (frame->can_id & FirstPacketLongMsg_Mask)
@@ -89,10 +99,11 @@ std::vector<uint8_t> Message::ToTcpNew(packet_type_e packet_type)
 		/*
 		* uint8_t - packet type
 		* uint32_t - time sec
-		* uint16_t = time mili sec
+		* uint16_t - time mili sec
 		* uint32_t - can id
 		* uint8_t - data len
 		* uint8_t[] - data
+		* uint16_t - crc16
 		*/
 		packet_data.push_back((uint8_t)packet_type);
 		uint32_t sec = (uint32_t)time.tv_sec;

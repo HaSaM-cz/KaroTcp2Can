@@ -28,13 +28,12 @@
 #include "util.h"
 
 
-const uint16_t PORT = 10000;
-const uint8_t address = 0x08;
-//const uint8_t address = 0x09;
+uint16_t default_tcp_port = 10000;
+uint8_t default_can_address = 0x08;
 
 namespace chrono = std::chrono;
 
-void tcp_rx_fn(std::vector<uint8_t> data);
+void tcp_rx_fn(std::shared_ptr<Message> message);
 void can_rx_fn(std::shared_ptr<Message> message);
 
 std::shared_ptr<TcpServer> tcp_server;
@@ -43,9 +42,9 @@ std::shared_ptr<CanHasam> can_socket;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char const* argv[])
 {
-	printf("version = %s\n", "1.0.1");
+	fprintf(stderr, "version = %s\n", "1.0.2");
 
-	tcp_server = std::make_shared<TcpServer>(PORT, tcp_rx_fn);
+	tcp_server = std::make_shared<TcpServer>(default_tcp_port, tcp_rx_fn);
 	tcp_server->Run();
 
 	can_socket = std::make_shared<CanHasam>(can_rx_fn);
@@ -60,20 +59,8 @@ int main(int argc, char const* argv[])
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /// Zprava z TCP socketu. Pošleme na CAN.
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-void tcp_rx_fn(std::vector<uint8_t> data)
+void tcp_rx_fn(std::shared_ptr<Message> message)
 {
-	//printf("%s\n", fmt::format("TCP RX").c_str());
-
-	std::shared_ptr<Message> message = std::make_shared<Message>();
-
-	message->set_DEST(data[1]);
-	message->set_SRC(address);
-	message->set_CMD(data[3]);
-	message->len = data[4];
-	message->data = std::vector<uint8_t>(data.begin() + 5, data.begin() + 5 + data[4]);
-
-	//message->Dump("TX ");
-
 	if (message->len <= 8)
 	{
 		struct can_frame frame;
@@ -112,16 +99,7 @@ void tcp_rx_fn(std::vector<uint8_t> data)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void can_rx_fn(std::shared_ptr<Message> message)
 {
-	if (message->get_DEST() == address/* || message->get_DEST() >= 0xFE*/)
-	{
-		//message->Dump("RX ");
-		std::vector<uint8_t> v = message->ToTcpOld(can_message);
-		if (v.size() > 0)
-		{
-			tcp_server->Send(v);
-			// TODO NEW tcp_server->Send(PrepareTcpData(v));
-		}
-	}
+	tcp_server->Send(message);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

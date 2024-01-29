@@ -99,9 +99,9 @@ void CanSocket::RunThread()
 
 		if (nbytes < 0)
 		{
-			printf("can0: error %d\n", errno);
+			fprintf(stderr, "can0: error %d\n", errno);
 			if ((errno == ENETDOWN))
-				printf("can0: interface down\n");
+				fprintf(stderr, "can0: interface down\n");
 
 			continue;
 		}
@@ -137,18 +137,18 @@ void CanSocket::RunThread()
 			{
 				__u32 dropcnt;
 				memcpy(&dropcnt, CMSG_DATA(cmsg), sizeof(__u32));
-				printf("dropcnt %ld\n", dropcnt);
+				fprintf(stderr, "dropcnt %ld\n", dropcnt);
 			}
 		}
 
 		if (frame.can_id & CAN_RTR_FLAG)
-			printf("CAN Retry flag ?\n");
+			fprintf(stderr, "CAN Retry flag ?\n");
 		if (frame.can_id & CAN_ERR_FLAG)
-			printf("CAN Err flag ?\n");
+			fprintf(stderr, "CAN Err flag ?\n");
 		if (frame.can_id & CAN_EFF_FLAG)
 			Receive(&tv, &frame); // OK mame zpravu
 		else
-			printf("Kratka z kratkym identifikatorem ?\n");
+			fprintf(stderr, "Zprava z kratkym identifikatorem ?\n");
 	}
 }
 

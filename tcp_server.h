@@ -13,20 +13,21 @@
 #include <functional>
 
 #include "tcp_channel.h"
+#include "message.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 class TcpServer
 {
 public:
-    TcpServer(uint16_t port, std::function<void(std::vector<uint8_t>)> fn);
+    TcpServer(uint16_t port, std::function<void(std::shared_ptr<Message>)> fn);
     ~TcpServer();
     void Run();
-    void Send(std::vector<uint8_t> &v);
+    void Send(std::shared_ptr<Message> message);
 protected:
 
     void RunThread();
 
-    std::function<void(std::vector<uint8_t>)> rx_fn;
+    std::function<void(std::shared_ptr<Message>)> rx_fn;
     std::thread tcp_thread;
     std::vector<std::shared_ptr<TcpChannel>> tcp_channels;
 

@@ -3,6 +3,7 @@
 #include <ctime>
 #include <vector>
 #include <bits/stdint-uintn.h>
+#include <linux/can.h>
 
 #include "properties.h"
 
@@ -25,6 +26,7 @@ class Message
 public:
 	Message();
 	Message(struct timeval* tv, struct canfd_frame* frame);
+	Message(uint8_t src, uint8_t dest, uint8_t cmd, std::vector<uint8_t> data);
 	bool AddNextFrame(struct timeval* tv, struct canfd_frame* frame);
 	void Dump(const char* prefix = "");
 	std::vector<uint8_t> ToTcpOld(packet_type_e packet_type);

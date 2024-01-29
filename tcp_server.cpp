@@ -1,12 +1,11 @@
 ﻿#include "tcp_server.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-TcpServer::TcpServer(uint16_t port, std::function<void(std::vector<uint8_t>)> fn)
+TcpServer::TcpServer(uint16_t port, std::function<void(std::shared_ptr<Message>)> fn)
 {
     rx_fn = fn;
 
     int param = 1;      // Parametr for setsockopt(), maybe we can change it to bool.
-    //char ip_str[INET_ADDRSTRLEN] = { '\0' };
 
     if ((listen_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         throw "Can't create a socket!\n";
@@ -23,30 +22,11 @@ TcpServer::TcpServer(uint16_t port, std::function<void(std::vector<uint8_t>)> fn
 
     if (listen(listen_socket, 5) < 0)
         throw "listen() error!\n";
-
-    //FD_ZERO(&connections);
-    //FD_SET(listen_socket, &connections);
-    //max_socket = listen_socket;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 TcpServer::~TcpServer()
 {
-    /*for (int i = 0; i <= max_socket; i++)
-    {
-        if (i == listen_socket)
-        {
-            shutdown(i, SHUT_RDWR);
-            close(i);
-            FD_CLR(i, &connections);
-        }
-        if (FD_ISSET(i, &connections))
-        {
-            shutdown(i, SHUT_RDWR);
-            close(i);
-            FD_CLR(i, &connections);
-        }
-    }*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +48,7 @@ void TcpServer::RunThread()
     while (true)
     {
         if ((new_socket = accept(listen_socket, (struct sockaddr*)&cli_addr, &addrlen)) < 0)
-            fprintf(stderr, "error in accept\n");
+            fprintf(stderr, "Error in accept\n");
 
         TcpChannel* tcp_channel = new TcpChannel(new_socket, rx_fn);
         tcp_channel->Run();
@@ -77,19 +57,17 @@ void TcpServer::RunThread()
         tcp_channels.push_back(sh_ptr);
 
 
-        fprintf(stdout, "accept OK\n");
+        fprintf(stdout, "Accept OK\n");
     }
 
     printf("TcpServer::RunThread entry\n");
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-void TcpServer::Send(std::vector<uint8_t> &v)
+// Funkce projde otevřené sokety a pošle do nich zpravu.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+void TcpServer::Send(std::shared_ptr<Message> message)
 {
-    //printf("TcpServer::Send entry\n");
-
-    //printf("tcp_channels %d\n", tcp_channels.size());
-
     auto it = std::begin(tcp_channels);
     while (it != std::end(tcp_channels))
     {
@@ -99,12 +77,10 @@ void TcpServer::Send(std::vector<uint8_t> &v)
         }
         else
         {
-            (*it)->Send(v);
+            (*it)->Send(message);
             it++;
         }
     }
-
-    //printf("TcpServer::Send exit\n");
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
