@@ -33,16 +33,16 @@ CanSocket::CanSocket()
 	//	return 1;
 	}*/
 
-	const int timestamp_on = 1;
-	if (setsockopt(s, SOL_SOCKET, SO_TIMESTAMP, &timestamp_on, sizeof(timestamp_on)) < 0) 
-	{
-	//	perror("setsockopt SO_TIMESTAMP");
-	//	return 1;
-	}
+	int loopback = 1; /* 0 = disabled, 1 = enabled (default) */
+	setsockopt(s, SOL_CAN_RAW, CAN_RAW_LOOPBACK, &loopback, sizeof(loopback));
 
-	if (bind(s, (struct sockaddr*)&addr, sizeof(addr)) == -1)
-	{
-	}
+	int recv_own_msgs = 1; /* 0 = disabled (default), 1 = enabled */
+	setsockopt(s, SOL_CAN_RAW, CAN_RAW_RECV_OWN_MSGS, &recv_own_msgs, sizeof(recv_own_msgs));
+
+	const int timestamp_on = 1;
+	setsockopt(s, SOL_SOCKET, SO_TIMESTAMP, &timestamp_on, sizeof(timestamp_on));
+
+	bind(s, (struct sockaddr*)&addr, sizeof(addr));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,9 +54,8 @@ CanSocket::~CanSocket()
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void CanSocket::Send(struct can_frame *frame)
 {
-	//printf("CanSocket::Send entry\n");
-	write(s, frame, sizeof(struct can_frame));
-	//printf("CanSocket::Send exit\n");
+	if (write(s, frame, sizeof(struct can_frame)) == -1)
+		fprintf(stderr, "can0: write error %d\n", errno);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
