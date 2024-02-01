@@ -123,6 +123,13 @@
     <ClInclude Include="tcp_server.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="KaroTcp2Can.service">
+      <FileType>Text</FileType>
+      <DeploymentContent>true</DeploymentContent>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">false</ExcludedFromBuild>
+    </Text>
+  </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <Verbose>true</Verbose>

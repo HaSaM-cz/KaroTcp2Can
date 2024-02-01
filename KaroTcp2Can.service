@@ -1,0 +1,13 @@
+[Unit]
+Description=TCP to CAN tunnel application.
+
+[Service]
+User=root
+WorkingDirectory=/srv/KaroTcp2Can
+ExecStart=/srv/KaroTcp2Can/KaroTcp2Can.out
+
+Restart=always
+RestartSec=1s
+
+[Install]
+WantedBy=multi-user.target
