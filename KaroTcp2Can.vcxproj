@@ -62,7 +62,10 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <RemotePostBuildEventUseInBuild>false</RemotePostBuildEventUseInBuild>
+    <RemotePostBuildEventUseInBuild>true</RemotePostBuildEventUseInBuild>
+    <RemoteCCompileToolExe>arm-linux-gnueabihf-g++</RemoteCCompileToolExe>
+    <RemoteCppCompileToolExe>arm-linux-gnueabihf-g++</RemoteCppCompileToolExe>
+    <RemoteLdToolExe>arm-linux-gnueabihf-g++</RemoteLdToolExe>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <RemoteCCompileToolExe>aarch64-linux-gnu-g++</RemoteCCompileToolExe>
@@ -84,25 +87,37 @@
     <RemoteCppCompileToolExe>g++-10</RemoteCppCompileToolExe>
     <RemoteLdToolExe>g++</RemoteLdToolExe>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <RemoteCCompileToolExe>arm-linux-gnueabihf-g++</RemoteCCompileToolExe>
+    <RemoteCppCompileToolExe>arm-linux-gnueabihf-g++</RemoteCppCompileToolExe>
+    <RemoteLdToolExe>arm-linux-gnueabihf-g++</RemoteLdToolExe>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
-      <LibraryDependencies>
-      </LibraryDependencies>
+      <LibraryDependencies>pthread;fmt</LibraryDependencies>
     </Link>
     <RemotePostBuildEvent>
-      <Command>gpio export 17 out</Command>
-      <Message>Exportovat kolík 17 pomocí nástroje gpio, abychom mohli spustit program blikání bez programu sudo</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <Link>
-      <LibraryDependencies>
-      </LibraryDependencies>
+      <LibraryDependencies>pthread;fmt</LibraryDependencies>
+      <ShowProgress>true</ShowProgress>
     </Link>
     <RemotePostBuildEvent>
-      <Command>gpio export 17 out</Command>
-      <Message>Exportovat kolík 17 pomocí nástroje gpio, abychom mohli spustit program blikání bez programu sudo</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </RemotePostBuildEvent>
+    <ClCompile>
+      <CppLanguageStandard>gnu++17</CppLanguageStandard>
+      <Verbose>true</Verbose>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="can_hasam.cpp" />
@@ -126,13 +141,14 @@
   <ItemGroup>
     <Text Include="KaroTcp2Can.service">
       <FileType>Text</FileType>
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">false</ExcludedFromBuild>
     </Text>
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <Verbose>true</Verbose>
+      <CppLanguageStandard>gnu++17</CppLanguageStandard>
     </ClCompile>
     <Link>
       <ShowProgress>true</ShowProgress>
@@ -141,6 +157,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <Link>
       <LibraryDependencies>pthread;fmt</LibraryDependencies>
+      <ShowProgress>true</ShowProgress>
     </Link>
     <ClCompile>
       <CppLanguageStandard>gnu++17</CppLanguageStandard>
@@ -162,6 +179,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <Link>
       <LibraryDependencies>pthread;fmt</LibraryDependencies>
+      <ShowProgress>true</ShowProgress>
     </Link>
     <ClCompile>
       <CppLanguageStandard>gnu++17</CppLanguageStandard>

@@ -72,7 +72,7 @@ void tcp_rx_fn(std::shared_ptr<Message> message)
 	else
 	{
 		struct can_frame frame;
-		uint16_t crc = GetCRC16(message->data);
+		uint16_t crc = GetCRC16(message->data, 0);
 
 		frame.can_id = message->can_id | 0x80000000 | FirstPacketLongMsg_Mask | LongMsg_Mask;
 		frame.can_dlc = 8;
