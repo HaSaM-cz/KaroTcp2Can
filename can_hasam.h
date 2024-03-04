@@ -5,6 +5,7 @@
 #include <map>
 #include <thread>
 #include <functional>
+#include <memory>
 
 #include "can_socket.h"
 #include "message.h"

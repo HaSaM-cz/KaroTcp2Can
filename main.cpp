@@ -42,7 +42,7 @@ std::shared_ptr<CanHasam> can_socket;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char const* argv[])
 {
-	fprintf(stderr, "version = %s\n", "1.0.2");
+	fprintf(stderr, "version = %s\n", "1.0.4");
 
 	tcp_server = std::make_shared<TcpServer>(default_tcp_port, tcp_rx_fn);
 	tcp_server->Run();
@@ -64,7 +64,13 @@ void tcp_rx_fn(std::shared_ptr<Message> message)
 	if (message->len <= 8)
 	{
 		struct can_frame frame;
-		frame.can_id = message->can_id | 0x80000000;
+
+		// kontrola delky identifikatoru odeslane zpravy
+		if ((message->can_id & ~CAN_SFF_MASK) != 0)
+			frame.can_id = message->can_id | CAN_EFF_FLAG;
+		else
+			frame.can_id = message->can_id;
+		
 		frame.can_dlc = message->len;
 		memcpy(frame.data, message->data.data(), message->len);
 		can_socket->Send(&frame);

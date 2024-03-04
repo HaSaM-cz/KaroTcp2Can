@@ -3,6 +3,7 @@
 #include <mutex>
 #include <vector>
 #include <functional>
+#include <memory>
 
 #include "message.h"
 

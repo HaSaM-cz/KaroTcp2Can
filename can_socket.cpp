@@ -144,10 +144,10 @@ void CanSocket::RunThread()
 			fprintf(stderr, "CAN Retry flag ?\n");
 		if (frame.can_id & CAN_ERR_FLAG)
 			fprintf(stderr, "CAN Err flag ?\n");
-		if (frame.can_id & CAN_EFF_FLAG)
+		//if (frame.can_id & CAN_EFF_FLAG)
 			Receive(&tv, &frame); // OK mame zpravu
-		else
-			fprintf(stderr, "Zprava z kratkym identifikatorem ?\n");
+		//else
+			//fprintf(stderr, "Zprava z kratkym identifikatorem ?\n");
 	}
 }
 
